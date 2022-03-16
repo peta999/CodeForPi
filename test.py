@@ -40,7 +40,9 @@ def main():
 #        return -1
     client.on_connect = on_connect
     client.on_message = on_message
+    client.on_disconnect = on_disconnect
     client.connect("192.168.2.54", 1883, 60)
+    client.loop_start()
     count = 0   # count to keep cooldown after sending warning email
     while True:
         temp, hum = get_temperature_humidity()
@@ -56,6 +58,7 @@ def main():
             dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
             data = "temperature: {}, humidity: {}, date: {}".format(temp, hum, dt_string)
             client.publish("data", data, 1)
+            print(str(data))
 
             if(len(temp_list) > 0 and sum(temp_list) / len(temp_list) <= 9.5 and count == 0):
                 send_mail()
@@ -73,6 +76,9 @@ def on_connect(client, userdata, flags, rc):
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
     client.subscribe("$SYS/#")
+
+def on_disconnect(client, userdata, rc):
+    print("Unexpected disconnection")
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
