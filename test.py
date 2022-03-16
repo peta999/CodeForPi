@@ -56,6 +56,7 @@ def main():
             dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
             data = "temperature: {}, humidity: {}, date: {}".format(temp, hum, dt_string)
             client.publish("data", data, 1)
+            print(str(data))
 
             if(len(temp_list) > 0 and sum(temp_list) / len(temp_list) <= 9.5 and count == 0):
                 send_mail()
