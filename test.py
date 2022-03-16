@@ -56,6 +56,7 @@ def main():
             dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
             data = "temperature: {}, humidity: {}, date: {}".format(temp, hum, dt_string)
             client.publish("data", data, 1)
+            client.on_disconnect = on_disconnect
             print(str(data))
 
             if(len(temp_list) > 0 and sum(temp_list) / len(temp_list) <= 9.5 and count == 0):
@@ -74,6 +75,10 @@ def on_connect(client, userdata, flags, rc):
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
     client.subscribe("$SYS/#")
+
+def on_disconnect(client, userdata, rc):
+    if rc != 0:
+        print("Unexpected disconnection")
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
