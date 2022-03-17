@@ -55,7 +55,7 @@ def main():
             now = datetime.now()
             #dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
             dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
-            data = "temperature: {}, humidity: {}, date: {}".format(round(temp, 1), round(hum, 1), dt_string)
+            data = "temperature: {}, humidity: {}, date: {}".format(temp, hum, dt_string)
             client.publish("data", data, 1)
             print(str(data))
             print(str(temp_list))
@@ -88,7 +88,7 @@ def get_temperature_humidity():
     while True:   
         humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR, DHT_PIN)
         if humidity is not None and temperature is not None:
-            return temperature, humidity
+            return round(temperature, 1), round(humidity, 1)
 
 # Berechnet Durchschnittstemperatur
 def cal_avg_temp():
