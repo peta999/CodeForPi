@@ -102,7 +102,7 @@ def cal_avg_temp():
 def cal_avg_hum():
     if hum_list:
         help_average = 0
-        for i in range(0, (hum_list)):
+        for i in range(0, (len(hum_list))):
             help_average = help_average + hum_list[i]
         hum_average = help_average / len(hum_list)
 
