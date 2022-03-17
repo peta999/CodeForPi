@@ -26,13 +26,13 @@ Temperatur zu niedrig, bitte ueberpruefen"""
 
 
 
-try:
+"""try:
     csv  = open('/home/pi/humidity.csv', 'a+')
     if os.stat('/home/pi/humdity.csv').st_size == 0:
         csv.write('Date,Time,Temperature,Humidity\t\n')
 except:
     pass
-
+"""
 def main():
 #    open_csv()
 #    if open_csv() is not True:
@@ -53,15 +53,16 @@ def main():
             hum_list.pop(0)
             cal_avg_hum()
             cal_avg_temp()
-            save_values_in_csv(temp, hum)
+            #save_values_in_csv(temp, hum)
             now = datetime.now()
             #dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
             dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
             data = "temperature: {}, humidity: {}, date: {}".format(round(temp, 1), round(hum, 1), dt_string)
             client.publish("data", data, 1)
             print(str(data))
+            print(str(temp_list))
 
-            if(len(temp_list) > 0 and sum(temp_list) / len(temp_list) <= 9.5 and count == 0):
+            if(len(temp_list) > 10 and sum(temp_list) / len(temp_list) <= 9.5 and count == 0):
                 send_mail()
                 count = 120
 
