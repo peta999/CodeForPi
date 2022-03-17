@@ -57,7 +57,7 @@ def main():
             now = datetime.now()
             #dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
             dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
-            data = "temperature: {}, humidity: {}, date: {}".format(temp, hum, dt_string)
+            data = "temperature: {}, humidity: {}, date: {}".format(round(temp, 1), round(hum, 1), dt_string)
             client.publish("data", data, 1)
             print(str(data))
 
