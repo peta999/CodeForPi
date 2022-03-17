@@ -47,10 +47,8 @@ def main():
     while True:
         temp, hum = get_temperature_humidity()
         if(valid_temperature(temp) and valid_humidity(hum)):
-            temp_list.append(temp)
-            temp_list.pop(0)
-            hum_list.append(hum)
-            hum_list.pop(0)
+            
+            
             cal_avg_hum()
             cal_avg_temp()
             #save_values_in_csv(temp, hum)
@@ -110,17 +108,23 @@ def cal_avg_hum():
 
 # Checks if temperature is valid | abweichung von avg_temperature
 def valid_temperature(temp):
+    temp_list.append(temp)
     if len(temp_list) >= 15:
         if cal_avg_temp() >= (temp + 5) or cal_avg_temp <= (temp + 5):
+            temp_list.pop(0)
             return True
+        temp_list.pop(0)
         return False
     return True
 
 # Checks if humidity is valid | abweichung von avg_humidity
 def valid_humidity(hum):
+    hum_list.append(hum)            
     if len(hum_list) >= 15:
         if cal_avg_hum() >= (hum + 5) or cal_avg_hum <= (hum + 5):
+            hum_list.pop(0)
             return True
+        hum_list.pop(0)
         return False
     return True
 
