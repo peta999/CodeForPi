@@ -52,7 +52,7 @@ def main():
             cal_avg_temp()
             # #save_values_in_csv(temp, hum)       
             dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
-            data = "temperature: {}, humidity: {}, date: {}".format(temp, hum, dt_string)
+            data = "{}, {}, {}".format(temp, hum, dt_string)
             client.publish("data", data, 1)
             print(str(data))
 
