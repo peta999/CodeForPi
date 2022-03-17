@@ -93,6 +93,7 @@ def cal_avg_temp():
         for i in range(0, len(temp_list)):
             help_average = help_average + temp_list[i]
         temp_average = help_average / len(temp_list)
+        return temp_average
 
 # Berechnet Durchschnittsfeuchtigkeit
 def cal_avg_hum():
@@ -101,6 +102,7 @@ def cal_avg_hum():
         for i in range(0, (len(hum_list))):
             help_average = help_average + hum_list[i]
         hum_average = help_average / len(hum_list)
+        return hum_average
 
 # Checks if temperature is valid | abweichung von avg_temperature
 def valid_temperature(temp):
