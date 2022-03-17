@@ -47,18 +47,14 @@ def main():
     while True:
         temp, hum = get_temperature_humidity()
         if(valid_temperature(temp) and valid_humidity(hum)):
-            
-            
+            now = datetime.now()            
             cal_avg_hum()
             cal_avg_temp()
-            #save_values_in_csv(temp, hum)
-            now = datetime.now()
-            #dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+            # #save_values_in_csv(temp, hum)       
             dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
             data = "temperature: {}, humidity: {}, date: {}".format(temp, hum, dt_string)
             client.publish("data", data, 1)
             print(str(data))
-            print(str(temp_list))
 
             if(len(temp_list) > 10 and sum(temp_list) / len(temp_list) <= 9.5 and count == 0):
                 send_mail()
