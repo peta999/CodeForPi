@@ -1,8 +1,11 @@
 import os
 import time
+from threading import Thread
 import Adafruit_DHT
 import paho.mqtt.client as mqtt
 from datetime import datetime
+import subprocess
+import yaml
 import smtplib, ssl
 
 DHT_SENSOR = Adafruit_DHT.AM2302
@@ -38,6 +41,8 @@ def main():
 #    if open_csv() is not True:
 #        print("-1")
 #        return -1
+
+    subprocess.run(['sudo', 'service', 'pilight', 'start'], capture_output=False)
     client.on_connect = on_connect
     client.on_message = on_message
     client.on_disconnect = on_disconnect
@@ -50,7 +55,7 @@ def main():
             now = datetime.now()            
             cal_avg_hum()
             cal_avg_temp()
-            # #save_values_in_csv(temp, hum)       
+            # save_values_in_csv(temp, hum)       
             dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
             data = "{}, {}, {}".format(temp, hum, dt_string)
             client.publish("data", data, 1)
@@ -151,5 +156,48 @@ def send_mail():
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, message)
         server.quit()
+
+
+
+def activatePowerHuehnerstall():
+    Thread.start(target = activatePowerHuehnerstallThread, args=())
+
+def deactivatePowerHuehnerstall():
+    Thread.start(target = deactivatePowerHuehnerstallThread, args=())
+
+# sends 433Mhz on signal to id 100, u 1
+def activatePowerHuehnerstallThread():
+    subprocess.run(['pilight-send', '-p', 'kaku_switch', '-i', '100', '-u', '1', '-t'], capture_output=False)  #id 100 unit 1 on
+
+# sends 433Mhz off signal to id 100, u 1
+def deactivatePowerHuehnerstallThread():
+    subprocess.run(['pilight-send', '-p', 'kaku_switch', '-i', '100', '-u', '1', '-f'], capture_output=False)  #id 100 unit 1 on
+
+# get values from config.yaml
+def getConfig():
+    verschiebung_abends = 0
+    verschiebung_morgens = 0
+    with open(r'C:\Users\hoppe\Documents\GitHub\CodeForPi\config.yaml') as file:
+        # The FullLoader parameter handles the conversion from YAML
+        # scalar values to Python the dictionary format
+        list_doc = yaml.safe_load(file)
+        verschiebung_abends = list_doc["huehnerstall"]["verschiebung_abends"]
+        verschiebung_morgends = list_doc["huehnerstall"]["verschiebung_morgens"]        
+
+def updateConfig():
+    with open(r'C:\Users\hoppe\Documents\GitHub\CodeForPi\config.yaml') as file:
+        # The FullLoader parameter handles the conversion from YAML
+        # scalar values to Python the dictionary format
+        list_doc = yaml.safe_load(file)
+        print(list_doc)
+        list_doc["huehnerstall"]["verschiebung_abends"] = 5
+        print(list_doc["huehnerstall"]["verschiebung_abends"])
+
+    list_doc["huehnerstall"]["verschiebung_abends"] = verschiebung_abends
+    list_doc["huehnerstall"]["verschiebung_morgens"] = verschiebung_morgends
+
+    with open(r"C:\Users\hoppe\Documents\GitHub\CodeForPi\config.yaml", "w") as f:
+        yaml.dump(list_doc, f)
+    
 
 main()

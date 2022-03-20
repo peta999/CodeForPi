@@ -1,0 +1,5 @@
+gewaechshaus:
+  temperatur: 0
+huehnerstall:
+  verschiebung_abends: 5
+  verschiebung_morgens: 0
