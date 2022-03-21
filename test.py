@@ -16,6 +16,8 @@ temp_average = 0
 hum_average = 0
 client = mqtt.Client()
 csv = None
+verschiebung_abends = 0
+verschiebung_morgens = 0
 port = 587  # For SSL email server
 smtp_server = "smtp.gmail.com"
 sender_email = "gewaechshaustemperatur@gmail.com"  # Enter your address
@@ -37,25 +39,31 @@ except:
     pass
 """
 def main():
-#    open_csv()
-#    if open_csv() is not True:
-#        print("-1")
-#        return -1
+    # open_csv()
+    # if open_csv() is not True:
+    #     print("-1")
+    #     return -1
 
+    # pilight-daemon starten
     subprocess.run(['sudo', 'service', 'pilight', 'start'], capture_output=False)
+    
+    # config laden
+    getConfig()
+
+    # mqtt einrichten
     client.on_connect = on_connect
     client.on_message = on_message
     client.on_disconnect = on_disconnect
     client.connect("192.168.2.54", 1883, 60)
     client.loop_start()
     count = 0   # count to keep cooldown after sending warning email
+
     while True:
         temp, hum = get_temperature_humidity()
         if(valid_temperature(temp) and valid_humidity(hum)):
             now = datetime.now()            
             cal_avg_hum()
-            cal_avg_temp()
-            # save_values_in_csv(temp, hum)       
+            cal_avg_temp()       
             dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
             data = "{}, {}, {}".format(temp, hum, dt_string)
             client.publish("data", data, 1)
@@ -175,8 +183,6 @@ def deactivatePowerHuehnerstallThread():
 
 # get values from config.yaml
 def getConfig():
-    verschiebung_abends = 0
-    verschiebung_morgens = 0
     with open(r'C:\Users\hoppe\Documents\GitHub\CodeForPi\config.yaml') as file:
         # The FullLoader parameter handles the conversion from YAML
         # scalar values to Python the dictionary format
@@ -194,7 +200,7 @@ def updateConfig():
         print(list_doc["huehnerstall"]["verschiebung_abends"])
 
     list_doc["huehnerstall"]["verschiebung_abends"] = verschiebung_abends
-    list_doc["huehnerstall"]["verschiebung_morgens"] = verschiebung_morgends
+    list_doc["huehnerstall"]["verschiebung_morgens"] = verschiebung_morgens
 
     with open(r"C:\Users\hoppe\Documents\GitHub\CodeForPi\config.yaml", "w") as f:
         yaml.dump(list_doc, f)
