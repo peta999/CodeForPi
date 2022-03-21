@@ -99,6 +99,8 @@ def on_message(client, userdata, msg):
         help1 = help1.replace("b","")
         verschiebung_morgens = int(help1)
         verschiebung_abends = int(help2)
+        print("in method on_message" + str(verschiebung_abends) + str(verschiebung_morgens) + "")
+
         updateConfig()
 
 
