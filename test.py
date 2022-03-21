@@ -92,9 +92,8 @@ def on_disconnect(client, userdata, rc):
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-    print(msg.topic+" "+str(msg.payload))
+    # print(msg.topic+" "+str(msg.payload))
     if msg.topic == "settings":
-        print("a msg on topic settings " + str(msg.payload))
         message = msg.payload
         help1, help2 = str(message).replace("'","").split(",", 1)
         help1 = help1.replace("b","")
@@ -208,6 +207,7 @@ def updateConfig():
         # scalar values to Python the dictionary format
         list_doc = yaml.safe_load(file)
 
+    print(str(verschiebung_abends) + str(verschiebung_morgens) + "")
     list_doc["huehnerstall"]["verschiebung_abends"] = verschiebung_abends
     list_doc["huehnerstall"]["verschiebung_morgens"] = verschiebung_morgens
     print(list_doc)
