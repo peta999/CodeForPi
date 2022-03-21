@@ -94,6 +94,8 @@ def on_disconnect(client, userdata, rc):
 def on_message(client, userdata, msg):
     # print(msg.topic+" "+str(msg.payload))
     if msg.topic == "settings":
+        global verschiebung_morgens
+        global verschiebung_abends
         message = msg.payload
         help1, help2 = str(message).replace("'","").split(",", 1)
         help1 = help1.replace("b","")
@@ -197,11 +199,13 @@ def deactivatePowerHuehnerstallThread():
 # get values from config.yaml
 def getConfig():
     with open("config.yaml") as file:
+        global verschiebung_abends
+        global verschiebung_morgens
         # The FullLoader parameter handles the conversion from YAML
         # scalar values to Python the dictionary format
         list_doc = yaml.safe_load(file)
         verschiebung_abends = list_doc["huehnerstall"]["verschiebung_abends"]
-        verschiebung_morgends = list_doc["huehnerstall"]["verschiebung_morgens"]        
+        verschiebung_morgens = list_doc["huehnerstall"]["verschiebung_morgens"]        
 
 def updateConfig():
     with open("config.yaml") as file:
