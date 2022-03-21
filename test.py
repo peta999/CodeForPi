@@ -94,7 +94,7 @@ def on_disconnect(client, userdata, rc):
 def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
     if msg.topic == "settings":
-        print("a msg on topic settings")
+        print("a msg on topic settings" + str(msg.payload))
         # verschiebung_morgens, verschiebung_abends = str(msg.payload).split(",", 1)
 
 
