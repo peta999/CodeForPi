@@ -94,8 +94,12 @@ def on_disconnect(client, userdata, rc):
 def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
     if msg.topic == "settings":
-        print("a msg on topic settings" + str(msg.payload))
-        # verschiebung_morgens, verschiebung_abends = str(msg.payload).split(",", 1)
+        print("a msg on topic settings " + str(msg.payload))
+        help1, help2 = str(msg.payload).split(",", 1)
+        help1 = help.replace("b","")
+        verschiebung_morgens = int(help1)
+        verschiebung_abends = int(help2)
+        updateConfig()
 
 
 def get_temperature_humidity():
