@@ -55,6 +55,7 @@ def main():
     client.on_message = on_message
     client.on_disconnect = on_disconnect
     client.connect("192.168.2.54", 1883, 60)
+    client.subscribe("settings", 1)
     client.loop_start()
     count = 0   # count to keep cooldown after sending warning email
 
@@ -84,7 +85,7 @@ def on_connect(client, userdata, flags, rc):
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe("$SYS/#")
+    # client.subscribe("$SYS/#")
 
 def on_disconnect(client, userdata, rc):
     print("Unexpected disconnection")
@@ -92,6 +93,10 @@ def on_disconnect(client, userdata, rc):
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
+    if msg.topic == "settings":
+        print("a msg on topic settings")
+        # verschiebung_morgens, verschiebung_abends = str(msg.payload).split(",", 1)
+
 
 def get_temperature_humidity():
     while True:   
@@ -168,8 +173,6 @@ def send_mail():
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, message)
         server.quit()
-
-
 
 def activatePowerHuehnerstall():
     Thread.start(target = activatePowerHuehnerstallThread, args=())
