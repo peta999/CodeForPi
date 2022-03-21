@@ -183,7 +183,7 @@ def deactivatePowerHuehnerstallThread():
 
 # get values from config.yaml
 def getConfig():
-    with open(r'C:\Users\hoppe\Documents\GitHub\CodeForPi\config.yaml') as file:
+    with open(r'.\config.yaml') as file:
         # The FullLoader parameter handles the conversion from YAML
         # scalar values to Python the dictionary format
         list_doc = yaml.safe_load(file)
