@@ -95,7 +95,8 @@ def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
     if msg.topic == "settings":
         print("a msg on topic settings " + str(msg.payload))
-        help1, help2 = str(msg.payload).split(",", 1)
+        message = msg.payload
+        help1, help2 = str(message).replace("'","").split(",", 1)
         help1 = help1.replace("b","")
         verschiebung_morgens = int(help1)
         verschiebung_abends = int(help2)
