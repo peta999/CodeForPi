@@ -121,9 +121,10 @@ def cal_avg_hum():
 
 # Checks if temperature is valid | abweichung von avg_temperature
 def valid_temperature(temp):
+    avg_temp = cal_avg_temp()
     temp_list.append(temp)
     if len(temp_list) >= 15:
-        if cal_avg_temp() >= (temp + 5) or cal_avg_temp <= (temp + 5):
+        if avg_temp >= (temp + 5) or avg_temp <= (temp + 5):
             temp_list.pop(0)
             return True
         temp_list.pop(0)
@@ -132,9 +133,10 @@ def valid_temperature(temp):
 
 # Checks if humidity is valid | abweichung von avg_humidity
 def valid_humidity(hum):
+    avg_hum = cal_avg_hum()
     hum_list.append(hum)            
     if len(hum_list) >= 15:
-        if cal_avg_hum() >= (hum + 5) or cal_avg_hum <= (hum + 5):
+        if avg_hum >= (hum + 5) or avg_hum <= (hum + 5):
             hum_list.pop(0)
             return True
         hum_list.pop(0)
