@@ -191,7 +191,7 @@ def getConfig():
         verschiebung_morgends = list_doc["huehnerstall"]["verschiebung_morgens"]        
 
 def updateConfig():
-    with open(r'C:\Users\hoppe\Documents\GitHub\CodeForPi\config.yaml') as file:
+    with open(r'.\config.yaml') as file:
         # The FullLoader parameter handles the conversion from YAML
         # scalar values to Python the dictionary format
         list_doc = yaml.safe_load(file)
@@ -202,7 +202,7 @@ def updateConfig():
     list_doc["huehnerstall"]["verschiebung_abends"] = verschiebung_abends
     list_doc["huehnerstall"]["verschiebung_morgens"] = verschiebung_morgens
 
-    with open(r"C:\Users\hoppe\Documents\GitHub\CodeForPi\config.yaml", "w") as f:
+    with open(r".\config.yaml", "w") as f:
         yaml.dump(list_doc, f)
     
 
