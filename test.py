@@ -271,7 +271,7 @@ def getConfig():
         list_doc = yaml.safe_load(file)
         verschiebung_abends = list_doc["huehnerstall"]["verschiebung_abends"]
         verschiebung_morgens = list_doc["huehnerstall"]["verschiebung_morgens"]        
-        hühner_aktiviert = list_doc["huehnerstall"]["on"]
+        hühner_aktiviert = list_doc["huehnerstall"]["an"]
         hilfsZeit = list_doc["huehnerstall"]["hilfs_zeit"]
 
 def updateConfig():
@@ -283,7 +283,7 @@ def updateConfig():
     print(str(verschiebung_abends) + str(verschiebung_morgens) + "")
     list_doc["huehnerstall"]["verschiebung_abends"] = verschiebung_abends
     list_doc["huehnerstall"]["verschiebung_morgens"] = verschiebung_morgens
-    list_doc["huehnerstall"]["on"] = hühner_aktiviert
+    list_doc["huehnerstall"]["an"] = hühner_aktiviert
     list_doc["huehnerstall"]["hilfs_zeit"] = hilfsZeit
 
     with open("config.yaml", "w") as f:
