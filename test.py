@@ -9,7 +9,6 @@ from datetime import datetime, time, timedelta
 import subprocess
 import yaml
 import smtplib, ssl
-import excel
 
 DHT_SENSOR = Adafruit_DHT.AM2302
 DHT_PIN = 4
