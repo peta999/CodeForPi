@@ -108,7 +108,7 @@ def main():
 
             aktuell = datetime.fromtimestamp(t.mktime(t.gmtime()))
             
-            
+            global hühner_aktiviert
             # Abends Strom an
             if(hühner_aktiviert == False and dämmerung_verschoben < aktuell):
                 # Strom an
