@@ -3,3 +3,5 @@ gewaechshaus:
 huehnerstall:
   verschiebung_abends: 5
   verschiebung_morgens: 0
+  on: False
+  hilfs_zeit: 0

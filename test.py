@@ -1,9 +1,11 @@
 import os
-import time
+import time as t
+import requests
+import json
 from threading import Thread
 import Adafruit_DHT
 import paho.mqtt.client as mqtt
-from datetime import datetime
+from datetime import datetime, time, timedelta
 import subprocess
 import yaml
 import smtplib, ssl
@@ -18,6 +20,10 @@ client = mqtt.Client()
 csv = None
 verschiebung_abends = 0
 verschiebung_morgens = 0
+hühner_aktiviert = False
+hilfsZeit = 0
+url = "https://api.sunrise-sunset.org/json?lat=48.688737&lng=10.931199&formatted=0"
+
 port = 587  # For SSL email server
 smtp_server = "smtp.gmail.com"
 sender_email = "gewaechshaustemperatur@gmail.com"  # Enter your address
@@ -58,7 +64,19 @@ def main():
     client.subscribe("settings", 1)
     client.loop_start()
     count = 0   # count to keep cooldown after sending warning email
+    count_refresh_dämmerung = 240
 
+    # dämmerung nach Programmstart initialisieren
+    r = requests.get(url)
+    # für raspberry pi wichtig. civil twilight ending
+    data = json.loads(r.content)
+    dämmerung = data['results']['civil_twilight_end']
+    solar_noon = data['results']['solar_noon']
+    # codiert string in datetime.datetime
+    dämmerung = datetime(int(dämmerung[0:4]), int(dämmerung[5:7]), int(dämmerung[8:10]), int(dämmerung[11:13]), int(dämmerung[14:16]), int(dämmerung[17:18]))
+    solar_noon = datetime(int(solar_noon[0:4]), int(solar_noon[5:7]), int(solar_noon[8:10]), int(solar_noon[11:13]), int(solar_noon[14:16]), int(solar_noon[17:18]))
+    dämmerung_verschoben = dämmerung.timestamp() + verschiebung_abends * 60
+    dämmerung_verschoben = datetime.fromtimestamp(dämmerung_verschoben) 
     while True:
         temp, hum = get_temperature_humidity()
         if(valid_temperature(temp) and valid_humidity(hum)):
@@ -75,10 +93,46 @@ def main():
                 count = 120
 
             if(count > 0):
-                count = count - 1    
+                count = count - 1
 
+            if(count_refresh_dämmerung >= 240):
+                re = requests.get(url)
+                data = json.loads(re.content)
+                vergleicher = data['results']['civil_twilight_end']
+                vergleicher = datetime(int(vergleicher[0:4]), int(vergleicher[5:7]), int(vergleicher[8:10]), int(vergleicher[11:13]), int(vergleicher[14:16]), int(vergleicher[17:18]))
+                if(dämmerung != vergleicher):
+                    dämmerung = vergleicher
+                    dämmerung_verschoben = dämmerung.timestamp() + verschiebung_abends * 60
+                    dämmerung_verschoben = datetime.fromtimestamp(dämmerung_verschoben)
+                count_refresh_dämmerung = 0
 
-        time.sleep(10)
+            aktuell = datetime.fromtimestamp(t.mktime(t.gmtime()))
+            
+            
+            # Abends Strom an
+            if(hühner_aktiviert == False and dämmerung_verschoben < aktuell):
+                # Strom an
+                activatePowerHuehnerstall()
+
+                global hilfsZeit
+                hilfsZeit = dämmerung_verschoben.timestamp() +  60 * 60 * 16                
+
+                global hühner_aktiviert
+                hühner_aktiviert = True
+
+                updateConfig()
+            
+            # Mittags Strom aus
+            if (hühner_aktiviert == True and datetime.fromtimestamp(hilfsZeit) < aktuell):
+                # Strom aus
+                deactivatePowerHuehnerstall()
+                
+                global hühner_aktiviert
+                hühner_aktiviert = False
+            
+                updateConfig()
+
+        t.sleep(10)
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
@@ -158,7 +212,7 @@ def valid_humidity(hum):
 
 # Speichert übergebene Werte in .csv Datei
 def save_values_in_csv(temp, hum):
-    csv.write('{0},{1},{2:0.1f}*C,{3:0.1f}%\r\n'.format(time.strftime('%m/%d/%y'), time.strftime('%H:%M'), temp, hum))
+    csv.write('{0},{1},{2:0.1f}*C,{3:0.1f}%\r\n'.format(t.strftime('%m/%d/%y'), t.strftime('%H:%M'), temp, hum))
 
 # Öffnet .csv Datei -> True: Erfolg
 def open_csv():
@@ -184,8 +238,16 @@ def send_mail():
 
 def activatePowerHuehnerstall():
     Thread.start(target = activatePowerHuehnerstallThread, args=())
+    Thread.start(target = activatePowerHuehnerstallThread, args=())
+    Thread.start(target = activatePowerHuehnerstallThread, args=())
+    Thread.start(target = activatePowerHuehnerstallThread, args=())
+    Thread.start(target = activatePowerHuehnerstallThread, args=())
 
 def deactivatePowerHuehnerstall():
+    Thread.start(target = deactivatePowerHuehnerstallThread, args=())
+    Thread.start(target = deactivatePowerHuehnerstallThread, args=())
+    Thread.start(target = deactivatePowerHuehnerstallThread, args=())
+    Thread.start(target = deactivatePowerHuehnerstallThread, args=())
     Thread.start(target = deactivatePowerHuehnerstallThread, args=())
 
 # sends 433Mhz on signal to id 100, u 1
@@ -201,11 +263,15 @@ def getConfig():
     with open("config.yaml") as file:
         global verschiebung_abends
         global verschiebung_morgens
+        global hühner_aktiviert
+        global hilfsZeit
         # The FullLoader parameter handles the conversion from YAML
         # scalar values to Python the dictionary format
         list_doc = yaml.safe_load(file)
         verschiebung_abends = list_doc["huehnerstall"]["verschiebung_abends"]
         verschiebung_morgens = list_doc["huehnerstall"]["verschiebung_morgens"]        
+        hühner_aktiviert = list_doc["huehnerstall"]["on"]
+        hilfsZeit = list_doc["huehnerstall"]["hilfs_zeit"]
 
 def updateConfig():
     with open("config.yaml") as file:
@@ -216,7 +282,8 @@ def updateConfig():
     print(str(verschiebung_abends) + str(verschiebung_morgens) + "")
     list_doc["huehnerstall"]["verschiebung_abends"] = verschiebung_abends
     list_doc["huehnerstall"]["verschiebung_morgens"] = verschiebung_morgens
-    print(list_doc)
+    list_doc["huehnerstall"]["on"] = hühner_aktiviert
+    list_doc["huehnerstall"]["hilfs_zeit"] = hilfsZeit
 
     with open("config.yaml", "w") as f:
         yaml.dump(list_doc, f)
