@@ -56,6 +56,10 @@ def main():
     # config laden
     getConfig()
 
+    # declare hühner_aktiviert as global
+    global hühner_aktiviert
+    global hilfsZeit
+
     # mqtt einrichten
     client.on_connect = on_connect
     client.on_message = on_message
@@ -108,16 +112,14 @@ def main():
 
             aktuell = datetime.fromtimestamp(t.mktime(t.gmtime()))
             
-            global hühner_aktiviert
+            
             # Abends Strom an
             if(hühner_aktiviert == False and dämmerung_verschoben < aktuell):
                 # Strom an
                 activatePowerHuehnerstall()
-
-                global hilfsZeit
-                hilfsZeit = dämmerung_verschoben.timestamp() +  60 * 60 * 16                
-
-                global hühner_aktiviert
+                
+                hilfsZeit = dämmerung_verschoben.timestamp() +  60 * 60 * 16
+                
                 hühner_aktiviert = True
 
                 updateConfig()
@@ -127,7 +129,6 @@ def main():
                 # Strom aus
                 deactivatePowerHuehnerstall()
                 
-                global hühner_aktiviert
                 hühner_aktiviert = False
             
                 updateConfig()
