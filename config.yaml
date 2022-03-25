@@ -1,7 +1,7 @@
 gewaechshaus:
   temperatur: 0
 huehnerstall:
-  verschiebung_abends: 5
+  verschiebung_abends: 0
   verschiebung_morgens: 0
   an: False
   hilfs_zeit: 0
