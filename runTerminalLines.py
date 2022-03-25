@@ -18,7 +18,8 @@ from threading import Thread
 # time.sleep(5)
 
 def main():
-    activatePowerHuehnerstall()
+    #activatePowerHuehnerstall()
+    activatePowerHuehnerstallThread()
 
 def activatePowerHuehnerstall():
     x = Thread(target = activatePowerHuehnerstallThread(), args=())
