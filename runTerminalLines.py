@@ -1,6 +1,7 @@
 import subprocess
 import time
 from threading import Thread
+from tkinter import Y
 
 # subprocess.run(['sudo', 'service', 'pilight', 'start'], capture_output=False)
 # time.sleep(15)          # wait unitl pilight started
@@ -20,17 +21,24 @@ from threading import Thread
 def main():
     #activatePowerHuehnerstall()
     activatePowerHuehnerstallThread()
+    time.sleep(5)
+    deactivatePowerHuehnerstall()
 
 def activatePowerHuehnerstall():
     x = Thread(target = activatePowerHuehnerstallThread(), args=())
+    y = Thread(target = activatePowerHuehnerstallThread(), args=())
+    z = Thread(target = activatePowerHuehnerstallThread(), args=())
     x.start()
+    y.start()
+    z.start()
 
 def deactivatePowerHuehnerstall():
-    Thread.start(target = deactivatePowerHuehnerstallThread, args=())
-    Thread.start(target = deactivatePowerHuehnerstallThread, args=())
-    Thread.start(target = deactivatePowerHuehnerstallThread, args=())
-    Thread.start(target = deactivatePowerHuehnerstallThread, args=())
-    Thread.start(target = deactivatePowerHuehnerstallThread, args=())
+    x = Thread(target = deactivatePowerHuehnerstallThread(), args=())
+    y = Thread(target = deactivatePowerHuehnerstallThread(), args=())
+    z = Thread(target = deactivatePowerHuehnerstallThread(), args=())
+    x.start()
+    y.start()
+    z.start()
 
 # sends 433Mhz on signal to id 100, u 1
 def activatePowerHuehnerstallThread():
