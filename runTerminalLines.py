@@ -21,11 +21,8 @@ def main():
     activatePowerHuehnerstall()
 
 def activatePowerHuehnerstall():
-    Thread.start(target = activatePowerHuehnerstallThread, args=())
-    Thread.start(target = activatePowerHuehnerstallThread, args=())
-    Thread.start(target = activatePowerHuehnerstallThread, args=())
-    Thread.start(target = activatePowerHuehnerstallThread, args=())
-    Thread.start(target = activatePowerHuehnerstallThread, args=())
+    x = Thread(target = activatePowerHuehnerstallThread(), args=())
+    x.start()
 
 def deactivatePowerHuehnerstall():
     Thread.start(target = deactivatePowerHuehnerstallThread, args=())
