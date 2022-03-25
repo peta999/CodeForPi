@@ -1,7 +1,6 @@
 import subprocess
 import time
 from threading import Thread
-from tkinter import Y
 
 # subprocess.run(['sudo', 'service', 'pilight', 'start'], capture_output=False)
 # time.sleep(15)          # wait unitl pilight started
