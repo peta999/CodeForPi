@@ -98,6 +98,8 @@ def main():
 
             if(count > 0):
                 count = count - 1
+            
+            count_refresh_dämmerung += 1
 
             if(count_refresh_dämmerung >= 240):
                 re = requests.get(url)
@@ -118,6 +120,7 @@ def main():
                 # Strom an
                 activatePowerHuehnerstall()
                 
+                print("erste Schelife")
                 hilfsZeit = dämmerung_verschoben.timestamp() +  60 * 60 * 16
                 
                 hühner_aktiviert = 1
@@ -128,7 +131,7 @@ def main():
             if (hühner_aktiviert == 1 and datetime.fromtimestamp(hilfsZeit) < aktuell):
                 # Strom aus
                 deactivatePowerHuehnerstall()
-                
+                print("zweite schleif")
                 hühner_aktiviert = 0
             
                 updateConfig()
