@@ -20,7 +20,7 @@ client = mqtt.Client()
 csv = None
 verschiebung_abends = 0
 verschiebung_morgens = 0
-hühner_aktiviert = False
+hühner_aktiviert = 1
 hilfsZeit = 0
 url = "https://api.sunrise-sunset.org/json?lat=48.688737&lng=10.931199&formatted=0"
 
@@ -114,22 +114,22 @@ def main():
             
             
             # Abends Strom anschalten
-            if(hühner_aktiviert == False and dämmerung_verschoben < aktuell):
+            if(hühner_aktiviert == 0 and dämmerung_verschoben < aktuell):
                 # Strom an
                 activatePowerHuehnerstall()
                 
                 hilfsZeit = dämmerung_verschoben.timestamp() +  60 * 60 * 16
                 
-                hühner_aktiviert = True
+                hühner_aktiviert = 1
 
                 updateConfig()
             
             # Mittags Strom ausschalten
-            if (hühner_aktiviert == True and datetime.fromtimestamp(hilfsZeit) < aktuell):
+            if (hühner_aktiviert == 1 and datetime.fromtimestamp(hilfsZeit) < aktuell):
                 # Strom aus
                 deactivatePowerHuehnerstall()
                 
-                hühner_aktiviert = False
+                hühner_aktiviert = 0
             
                 updateConfig()
 
@@ -282,7 +282,7 @@ def updateConfig():
         # scalar values to Python the dictionary format
         list_doc = yaml.safe_load(file)
 
-    print(str(verschiebung_abends) + str(verschiebung_morgens) + "")
+    # print(str(verschiebung_abends) + str(verschiebung_morgens) + "")
     list_doc["huehnerstall"]["verschiebung_abends"] = verschiebung_abends
     list_doc["huehnerstall"]["verschiebung_morgens"] = verschiebung_morgens
     list_doc["huehnerstall"]["an"] = hühner_aktiviert
