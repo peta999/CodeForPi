@@ -112,7 +112,7 @@ def main():
                     dämmerung_verschoben = datetime.fromtimestamp(dämmerung_verschoben)
                 count_refresh_dämmerung = 0
 
-            aktuell = datetime.fromtimestamp(t.mktime(t.gmtime()))
+            aktuell = datetime.strptime((datetime.now().strftime("%Y-%m-%d %H:%M:%S")), ("%Y-%m-%d %H:%M:%S"))
             
             
             # Abends Strom anschalten
@@ -135,6 +135,7 @@ def main():
                 hühner_aktiviert = 0
             
                 updateConfig()
+
 
         t.sleep(10)
 
