@@ -5,7 +5,7 @@ import json
 from threading import Thread
 import Adafruit_DHT
 import paho.mqtt.client as mqtt
-from datetime import datetime, time, timedelta
+from datetime import datetime, time, timezone
 import subprocess
 import yaml
 import smtplib, ssl
@@ -112,7 +112,7 @@ def main():
                     dämmerung_verschoben = datetime.fromtimestamp(dämmerung_verschoben)
                 count_refresh_dämmerung = 0
 
-            aktuell = datetime.strptime((datetime.now().strftime("%Y-%m-%d %H:%M:%S")), ("%Y-%m-%d %H:%M:%S"))
+            aktuell = datetime.strptime((datetime.now().strftime("%Y-%m-%d %H:%M:%S")), ("%Y-%m-%d %H:%M:%S")).replace(tzinfo=timezone.utc)
             
             
             # Abends Strom anschalten
