@@ -27,13 +27,26 @@ four_pm = datetime.combine(datetime.now(), four_pm_time)
 aktuell = datetime.strptime((datetime.now().strftime("%Y-%m-%d %H:%M:%S")), ("%Y-%m-%d %H:%M:%S")).replace(tzinfo=timezone.utc)
 #print(aktuell)
 
-local = pytz.timezone("America/Los_Angeles")
-naive = datetime.strptime("2001-2-3 10:11:12", "%Y-%m-%d %H:%M:%S")
-local_dt = local.localize(naive, is_dst=None)
+#
+# naive = datetime.strptime("2001-2-3 10:11:12", "%Y-%m-%d %H:%M:%S")
+# local_dt = local.localize(naive, is_dst=None)
+# utc_dt = local_dt.astimezone(pytz.utc)
+# print(naive)
+# print(local_dt)
+# print(utc_dt)
+# print(pytz.all_timezones)
+
+local = pytz.timezone('Europe/Berlin')
+aktuell = datetime.now()
+local_dt = local.localize(aktuell, is_dst = None)
 utc_dt = local_dt.astimezone(pytz.utc)
-print(naive)
-print(local_dt)
+utc_dt = datetime.strptime((utc_dt.strftime("%Y-%m-%d %H:%M:%S")), ("%Y-%m-%d %H:%M:%S"))
 print(utc_dt)
+
+utc = pytz.timezone('Atlantic/Reykjavik')
+dämmerung_dt = local.localize(utc, is_dst = None)
+
+
 
 
 

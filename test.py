@@ -1,5 +1,6 @@
 import os
 import time as t
+import pytz
 import requests
 import json
 from threading import Thread
@@ -74,13 +75,18 @@ def main():
     r = requests.get(url)
     # für raspberry pi wichtig. civil twilight ending
     data = json.loads(r.content)
+    local = pytz.timezone('Europe/Berlin')
+    utc = pytz.timezone('Atlantic/Reykjavik')
     dämmerung = data['results']['civil_twilight_end']
     solar_noon = data['results']['solar_noon']
     # codiert string in datetime.datetime
     dämmerung = datetime(int(dämmerung[0:4]), int(dämmerung[5:7]), int(dämmerung[8:10]), int(dämmerung[11:13]), int(dämmerung[14:16]), int(dämmerung[17:18]))
-    solar_noon = datetime(int(solar_noon[0:4]), int(solar_noon[5:7]), int(solar_noon[8:10]), int(solar_noon[11:13]), int(solar_noon[14:16]), int(solar_noon[17:18]))
     dämmerung_verschoben = dämmerung.timestamp() + verschiebung_abends * 60
-    dämmerung_verschoben = datetime.fromtimestamp(dämmerung_verschoben) 
+    dämmerung_verschoben = datetime.fromtimestamp(dämmerung_verschoben)
+    dämmerung = utc.localize(dämmerung, is_dst = None)
+    dämmerung_verschoben = utc.localize(dämmerung_verschoben, is_dst = None)
+
+     
     while True:
         temp, hum = get_temperature_humidity()
         if(valid_temperature(temp) and valid_humidity(hum)):
@@ -106,15 +112,20 @@ def main():
                 data = json.loads(re.content)
                 vergleicher = data['results']['civil_twilight_end']
                 vergleicher = datetime(int(vergleicher[0:4]), int(vergleicher[5:7]), int(vergleicher[8:10]), int(vergleicher[11:13]), int(vergleicher[14:16]), int(vergleicher[17:18]))
+                vergleicher = utc.localize(vergleicher, is_dst = None)
                 if(dämmerung != vergleicher):
                     dämmerung = vergleicher
                     dämmerung_verschoben = dämmerung.timestamp() + verschiebung_abends * 60
                     dämmerung_verschoben = datetime.fromtimestamp(dämmerung_verschoben)
+                    dämmerung_verschoben = utc.localize(dämmerung_verschoben, is_dst = None)
                 count_refresh_dämmerung = 0
 
-            aktuell = datetime.strptime((datetime.now().strftime("%Y-%m-%d %H:%M:%S")), ("%Y-%m-%d %H:%M:%S")).replace(tzinfo=timezone.utc)
-            
-            
+            aktuell = datetime.now()            
+            akutell = local.localize(aktuell, is_dst = None)
+            aktuell = aktuell.astimezone(pytz.utc)
+            aktuell = datetime.strptime((aktuell.strftime("%Y-%m-%d %H:%M:%S")), ("%Y-%m-%d %H:%M:%S"))
+
+
             # Abends Strom anschalten
             if(hühner_aktiviert == 0 and dämmerung_verschoben < aktuell):
                 # Strom an
@@ -122,13 +133,14 @@ def main():
                 
                 print("erste Schelife")
                 hilfsZeit = dämmerung_verschoben.timestamp() +  60 * 60 * 16
-                
+                # hilfsZeit = utc.localize(hilfsZeit, is_dst = None)
+
                 hühner_aktiviert = 1
 
                 updateConfig()
             
             # Mittags Strom ausschalten
-            if (hühner_aktiviert == 1 and datetime.fromtimestamp(hilfsZeit) < aktuell):
+            if (hühner_aktiviert == 1 and utc.localize(datetime.fromtimestamp(hilfsZeit), is_dst = None) < aktuell):
                 # Strom aus
                 deactivatePowerHuehnerstall()
                 print("zweite schleif")
