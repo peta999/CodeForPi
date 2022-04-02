@@ -1,4 +1,5 @@
 import os
+from socket import timeout
 import time as t
 import pytz
 import requests
@@ -156,6 +157,11 @@ def main():
 
 
             t.sleep(10)
+    # except TimeoutError:
+    #     pass
+    except timeout:
+        print("timeoutttttt")
+        pass
     except BaseException as err:
         print("Unexpected {}, {}".format(err, type(err)))             
         logging.error("Unexpected {}, {}".format(err, type(err)))
