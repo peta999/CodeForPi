@@ -13,7 +13,7 @@ import yaml
 import smtplib, ssl
 
 import logging
-logging.basicConfig(filename='logfile.log', level=logging.INFO, format='%(levelname)s:%(message)s')
+logging.basicConfig(filename='logfile.log', level=logging.INFO, format='%[(asctime)s]%(levelname)s:%(message)s')
 logging.info("message")
 
 
@@ -157,10 +157,9 @@ def main():
 
 
             t.sleep(10)
-    # except TimeoutError:
-    #     pass
+    
     except timeout:
-        print("timeoutttttt")
+        # fängt timeout des mqtt clients ab, bzw des requests
         pass
     except BaseException as err:
         print("Unexpected {}, {}".format(err, type(err)))             
