@@ -156,9 +156,12 @@ def main():
 
 
             t.sleep(10)
+    except timeout as err:
+        pass
     except BaseException as err:
         print("Unexpected {}, {}".format(err, type(err)))             
         logging.error("Unexpected {}, {}".format(err, type(err)))
+        raise
         # t.sleep(60)
         # main()  
         
