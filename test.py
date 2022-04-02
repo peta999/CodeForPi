@@ -158,8 +158,8 @@ def main():
             t.sleep(10)
     except BaseException as err:              
         logging.error(f"Unexpected {err=}, {type(err)=}")
-        t.sleep(60)
-        main()  
+        # t.sleep(60)
+        # main()  
         
 
 def on_connect(client, userdata, flags, rc):
