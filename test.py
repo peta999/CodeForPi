@@ -13,7 +13,7 @@ import yaml
 import smtplib, ssl
 
 import logging
-logging.basicConfig(filename='logfile.log', level=logging.INFO, format='%[(asctime)s]%(levelname)s:%(message)s')
+logging.basicConfig(filename='logfile.log', level=logging.INFO, format='%(asctime)s:%(levelname)s:%(message)s')
 logging.info("message")
 
 
