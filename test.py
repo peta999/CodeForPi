@@ -156,8 +156,9 @@ def main():
 
 
             t.sleep(10)
-    except BaseException as err:              
-        logging.error(f"Unexpected {err=}, {type(err)=}")
+    except BaseException as err:
+        print(f"Unexpected {err=}, {type(err)=}")              
+        # logging.error(f"Unexpected {err=}, {type(err)=}")
         # t.sleep(60)
         # main()  
         
