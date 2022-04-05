@@ -14,7 +14,7 @@ import smtplib, ssl
 
 import logging
 logging.basicConfig(filename='logfile.log', level=logging.INFO, format='%(asctime)s:%(levelname)s:%(message)s')
-logging.info("message")
+
 
 
 DHT_SENSOR = Adafruit_DHT.AM2302
