@@ -130,7 +130,8 @@ def main():
                 aktuell = datetime.now()            
                 akutell = local.localize(aktuell, is_dst = None)
                 aktuell = aktuell.astimezone(pytz.utc)
-                aktuell = datetime.strptime((aktuell.strftime("%Y-%m-%d %H:%M:%S")), ("%Y-%m-%d %H:%M:%S"))
+                # aktuell = datetime.strptime((aktuell.strftime("%Y-%m-%d %H:%M:%S")), ("%Y-%m-%d %H:%M:%S"))
+                
 
 
                 # Abends Strom anschalten
