@@ -159,15 +159,14 @@ def main():
 
             t.sleep(10)
     
-    except timeout:
+    # except timeout:
         # fängt timeout des mqtt clients ab, bzw des requests
-        pass
+    #     pass
     except BaseException as err:
         print("Unexpected {}, {}".format(err, type(err)))             
         logging.error("Unexpected {}, {}".format(err, type(err)))
-        raise
-        # t.sleep(60)
-        # main()  
+        t.sleep(60)
+        main()  
         
 
 def on_connect(client, userdata, flags, rc):
@@ -179,6 +178,7 @@ def on_connect(client, userdata, flags, rc):
 
 def on_disconnect(client, userdata, rc):
     print("Unexpected disconnection")
+    logging.error("Unexpected disconnection")
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
