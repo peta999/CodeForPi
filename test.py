@@ -79,7 +79,7 @@ def main():
         count_refresh_dämmerung = 240
 
         # dämmerung nach Programmstart initialisieren
-        r = requests.get(url)
+        r = requests.get(url, verify=False)
         # für raspberry pi wichtig. civil twilight ending
         data = json.loads(r.content)
         local = pytz.timezone('Europe/Berlin')
@@ -115,7 +115,7 @@ def main():
                 count_refresh_dämmerung += 1
 
                 if(count_refresh_dämmerung >= 240):
-                    re = requests.get(url)
+                    re = requests.get(url, verify=False)
                     data = json.loads(re.content)
                     vergleicher = data['results']['civil_twilight_end']
                     vergleicher = datetime(int(vergleicher[0:4]), int(vergleicher[5:7]), int(vergleicher[8:10]), int(vergleicher[11:13]), int(vergleicher[14:16]), int(vergleicher[17:18]))
