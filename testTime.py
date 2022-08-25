@@ -96,10 +96,11 @@ def main():
         
         while True:
             
-            st = t.time()
-            st_cpu = t.process_time()
+            
             
             temp, hum = get_temperature_humidity()
+            st = t.time()
+            st_cpu = t.process_time()
             if(valid_temperature(temp) and valid_humidity(hum)):
                 now = datetime.now()            
                 cal_avg_hum()
