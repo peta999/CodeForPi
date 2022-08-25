@@ -53,13 +53,117 @@ except:
 """
 def main():
     try:
+        # open_csv()
+        # if open_csv() is not True:
+        #     print("-1")
+        #     return -1
+
+        # pilight-daemon starten
+        subprocess.run(['sudo', 'service', 'pilight', 'start'], capture_output=False)
         
-        while True:   
+        # config laden
+        getConfig()
+
+        # declare hühner_aktiviert as global
+        global hühner_aktiviert
+        global hilfsZeit
+
+        # mqtt einrichten
+        client.on_connect = on_connect
+        client.on_message = on_message
+        client.on_disconnect = on_disconnect
+        client.connect("192.168.2.24", 1883, 60)
+        client.subscribe("settings", 1)
+        client.loop_start()
+        count = 0   # count to keep cooldown after sending warning email
+        count_refresh_dämmerung = 240
+
+        # dämmerung nach Programmstart initialisieren
+        r = requests.get(url, verify=False)
+        # für raspberry pi wichtig. civil twilight ending
+        data = json.loads(r.content)
+        local = pytz.timezone('Europe/Berlin')
+        utc = pytz.timezone('Atlantic/Reykjavik')
+        dämmerung = data['results']['civil_twilight_end']
+        solar_noon = data['results']['solar_noon']
+        # codiert string in datetime.datetime
+        dämmerung = datetime(int(dämmerung[0:4]), int(dämmerung[5:7]), int(dämmerung[8:10]), int(dämmerung[11:13]), int(dämmerung[14:16]), int(dämmerung[17:18]))
+        dämmerung_verschoben = dämmerung.timestamp() + verschiebung_abends * 60
+        dämmerung_verschoben = datetime.fromtimestamp(dämmerung_verschoben)
+        dämmerung = utc.localize(dämmerung, is_dst = None)
+        dämmerung_verschoben = utc.localize(dämmerung_verschoben, is_dst = None)
+
+        
+        while True:
+            
+            
+            
             temp, hum = get_temperature_humidity()
-            print("Temperature: {} C".format(temp))
-            print("Humidity: {} %".format(hum))
+            st = t.time()
+            st_cpu = t.process_time()
+            if(valid_temperature(temp) and valid_humidity(hum)):
+                now = datetime.now()            
+                cal_avg_hum()
+                cal_avg_temp()       
+                dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
+                data = "{}, {}, {}".format(temp, hum, dt_string)
+                client.publish("data", data, 1)
+                print(str(data))
+
+                if(len(temp_list) > 10 and sum(temp_list) / len(temp_list) <= 9.5 and count == 0):
+                    send_mail()
+                    count = 120
+
+                if(count > 0):
+                    count = count - 1
+                
+                count_refresh_dämmerung += 1
+
+                if(count_refresh_dämmerung >= 240):
+                    re = requests.get(url, verify=False)
+                    data = json.loads(re.content)
+                    vergleicher = data['results']['civil_twilight_end']
+                    vergleicher = datetime(int(vergleicher[0:4]), int(vergleicher[5:7]), int(vergleicher[8:10]), int(vergleicher[11:13]), int(vergleicher[14:16]), int(vergleicher[17:18]))
+                    vergleicher = utc.localize(vergleicher, is_dst = None)
+                    if(dämmerung != vergleicher):
+                        dämmerung = vergleicher
+                        dämmerung_verschoben = dämmerung.timestamp() + verschiebung_abends * 60
+                        dämmerung_verschoben = datetime.fromtimestamp(dämmerung_verschoben)
+                        dämmerung_verschoben = utc.localize(dämmerung_verschoben, is_dst = None)
+                    count_refresh_dämmerung = 0
+
+                aktuell = datetime.now()            
+                akutell = local.localize(aktuell, is_dst = None)
+                aktuell = aktuell.astimezone(pytz.utc)
+                # aktuell = datetime.strptime((aktuell.strftime("%Y-%m-%d %H:%M:%S")), ("%Y-%m-%d %H:%M:%S"))
+                
+
+
+                # Abends Strom anschalten
+                if(hühner_aktiviert == 0 and dämmerung_verschoben < aktuell):
+                    # Strom an
+                    activatePowerHuehnerstall()
                     
-            t.sleep(1)
+                    print("erste Schelife")
+                    hilfsZeit = dämmerung_verschoben.timestamp() +  60 * 60 * 16
+                    # hilfsZeit = utc.localize(hilfsZeit, is_dst = None)
+
+                    hühner_aktiviert = 1
+
+                    updateConfig()
+                
+                # Mittags Strom ausschalten
+                if (hühner_aktiviert == 1 and utc.localize(datetime.fromtimestamp(hilfsZeit), is_dst = None) < aktuell):
+                    # Strom aus
+                    deactivatePowerHuehnerstall()
+                    print("zweite schleif")
+                    hühner_aktiviert = 0
+                
+                    updateConfig()
+
+            
+                    
+            t.sleep(10)
     
     # except timeout:
         # fängt timeout des mqtt clients ab, bzw des requests
