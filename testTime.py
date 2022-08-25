@@ -161,11 +161,7 @@ def main():
                 
                     updateConfig()
 
-            et = t.time();
-            et_cpu = t.process_time()
-            res = et - st
-            res_cpu = et_cpu - st_cpu
-            print("{}s, {}s".format(res, res_cpu))
+            
                     
             t.sleep(10)
     
@@ -207,9 +203,16 @@ def on_message(client, userdata, msg):
 
 
 def get_temperature_humidity():
+    st = t.time()
+    st_cpu = t.process_time()
     while True:   
         humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR, DHT_PIN)
         if humidity is not None and temperature is not None:
+            et = t.time();
+            et_cpu = t.process_time()
+            res = et - st
+            res_cpu = et_cpu - st_cpu
+            print("{}s, {}s".format(res, res_cpu))
             return round(temperature, 1), round(humidity, 1)
 
 # Berechnet Durchschnittstemperatur
