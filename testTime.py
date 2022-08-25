@@ -59,7 +59,7 @@ def main():
             print("Temperature: {} C".format(temp))
             print("Humidity: {} %".format(hum))
                     
-            t.sleep(1)
+            t.sleep(5)
     
     # except timeout:
         # fängt timeout des mqtt clients ab, bzw des requests
