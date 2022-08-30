@@ -112,8 +112,8 @@ def main():
             cal_avg_temp()       
             dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
             data = "{}, {}, {}".format(temp, hum, dt_string)
-            client.publish("data", data, 1)
-            print(str(data))
+            Thread(target=client.publish(), args=("data", data, 1)).start()
+            
 
             if(len(temp_list) > 10 and sum(temp_list) / len(temp_list) <= 9.5 and count == 0):
                 send_mail()
@@ -156,7 +156,7 @@ def main():
             
                 updateConfig()
         print("before delay_thread.join: " + str(datetime.now()))
-        delay_thread.join
+        delay_thread.join()
         print("after delay_thread.join: " + str(datetime.now()))
 
 
