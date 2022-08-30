@@ -64,7 +64,7 @@ def main():
     client.on_connect = on_connect
     client.on_message = on_message
     client.on_disconnect = on_disconnect
-    client.connect("192.168.2.54", 1883, 60)
+    client.connect("192.168.2.24", 1883, 60)
     client.subscribe("settings", 1)
     client.loop_start()
     count = 0   # count to keep cooldown after sending warning email
