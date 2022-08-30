@@ -100,6 +100,7 @@ def main():
         et1 = t.process_time()
 
         #print wall and execution time
+        print("creating and task and starting task took:")
         print("wall time: " + str(et - st))
         print("execution time: " + str(et1 - st1))
 
@@ -119,6 +120,7 @@ def main():
 
         et = t.time()
         et1 = t.process_time()
+        print("creating, starting sleep task and getting result took:")
         print("wall time: " + str(et - st))
         print("execution time: " + str(et1 - st1))
 
@@ -176,11 +178,13 @@ def main():
                 updateConfig()
         et = t.time()
         et1 = t.process_time()
+        print("validating and publishing took:")
         print("wall time: " + str(et - st))
         print("execution time: " + str(et1 - st1))
         delay_thread.join
         et_all = t.time()
         et_all1 = t.process_time()
+        print("total time of loop:")
         print("wall time: " + str(et_all - st_all))
         print("execution time: " + str(et_all1 - st_all1))
 
