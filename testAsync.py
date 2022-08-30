@@ -97,9 +97,9 @@ def main():
 
         print("after 50 second sleep: " + str(datetime.now()))
         
-        # make a 10 second Thread to make while loop take excactly 60 seconds
+        # make a 9 second Thread make it take roughly 60 seconds
 
-        delay_thread = Thread(target=thread_sleep_x_seconds, args=(10,))
+        delay_thread = Thread(target=thread_sleep_x_seconds, args=(9,))
         delay_thread.start()
         
         temp, hum = async_result.get()
