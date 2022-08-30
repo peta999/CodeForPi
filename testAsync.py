@@ -83,12 +83,8 @@ def main():
     dämmerung_verschoben = dämmerung.timestamp() + verschiebung_abends * 60
     dämmerung_verschoben = datetime.fromtimestamp(dämmerung_verschoben) 
     while True:
-        # get current time
-        st_all = t.time()
-        st_all1 = t.process_time()
-
-        st = t.time()
-        st1 = t.process_time()
+        # print current time
+        print("start of loop: " + datetime.now())
 
 
 
@@ -96,20 +92,13 @@ def main():
         temp, hum = get_temperature_humidity()
         async_result = pool.apply_async(get_temperature_humidity)
 
-        et = t.time()
-        et1 = t.process_time()
 
-        #print wall and execution time
-        print("creating and task and starting task took:")
-        print("wall time: " + str(et - st))
-        print("execution time: " + str(et1 - st1))
-
+        print("before 50 second sleep: " + datetime.now())
 
         # wait 50 seconds
         t.sleep(50)
 
-        st = t.time()
-        st1 = t.process_time()
+        print("after 50 second sleep: " + datetime.now())
         
         # make a 10 second Thread to make while loop take excactly 60 seconds
 
@@ -118,14 +107,7 @@ def main():
         
         temp, hum = async_result.get()
 
-        et = t.time()
-        et1 = t.process_time()
-        print("creating, starting sleep task and getting result took:")
-        print("wall time: " + str(et - st))
-        print("execution time: " + str(et1 - st1))
-
-        st = t.time()
-        st1 = t.process_time()
+        print("just before if(): " + datetime.now())
 
         if(valid_temperature(temp) and valid_humidity(hum)):
             now = datetime.now()            
@@ -176,17 +158,10 @@ def main():
                 hühner_aktiviert = False
             
                 updateConfig()
-        et = t.time()
-        et1 = t.process_time()
-        print("validating and publishing took:")
-        print("wall time: " + str(et - st))
-        print("execution time: " + str(et1 - st1))
+        print("before delay_thread.join: " + datetime.now())
         delay_thread.join
-        et_all = t.time()
-        et_all1 = t.process_time()
-        print("total time of loop:")
-        print("wall time: " + str(et_all - st_all))
-        print("execution time: " + str(et_all1 - st_all1))
+        print("after delay_thread.join: " + datetime.now())
+
 
 
 def on_connect(client, userdata, flags, rc):
