@@ -27,5 +27,8 @@ def main():
 
         print(f'Temperature: {temp} Humidity: {hum}')
 
+
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+        print('\n')
 if __name__ == '__main__':
     asyncio.run(main())
