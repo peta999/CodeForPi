@@ -84,8 +84,7 @@ def main():
     dämmerung_verschoben = datetime.fromtimestamp(dämmerung_verschoben) 
     while True:
         # print current time
-        print("start of loop: " + datetime.now())
-
+        print("start of loop: " + str(datetime.now()))
 
 
         pool = ThreadPool(processes=1)
@@ -93,12 +92,11 @@ def main():
         async_result = pool.apply_async(get_temperature_humidity)
 
 
-        print("before 50 second sleep: " + datetime.now())
-
+        print("before 50 second sleep: " + str(datetime.now()))
         # wait 50 seconds
         t.sleep(50)
 
-        print("after 50 second sleep: " + datetime.now())
+        print("after 50 second sleep: " + str(datetime.now()))
         
         # make a 10 second Thread to make while loop take excactly 60 seconds
 
@@ -107,7 +105,7 @@ def main():
         
         temp, hum = async_result.get()
 
-        print("just before if(): " + datetime.now())
+        print("just before if(): " + str(datetime.now()))
 
         if(valid_temperature(temp) and valid_humidity(hum)):
             now = datetime.now()            
@@ -158,9 +156,9 @@ def main():
                 hühner_aktiviert = False
             
                 updateConfig()
-        print("before delay_thread.join: " + datetime.now())
+        print("before delay_thread.join: " + str(datetime.now()))
         delay_thread.join
-        print("after delay_thread.join: " + datetime.now())
+        print("after delay_thread.join: " + str(datetime.now()))
 
 
 
