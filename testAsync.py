@@ -83,19 +83,47 @@ def main():
     dämmerung_verschoben = dämmerung.timestamp() + verschiebung_abends * 60
     dämmerung_verschoben = datetime.fromtimestamp(dämmerung_verschoben) 
     while True:
+        # get current time
+        st_all = t.time()
+        st_all1 = t.process_time()
+
+        st = t.time()
+        st1 = t.process_time()
+
+
+
         pool = ThreadPool(processes=1)
         temp, hum = get_temperature_humidity()
         async_result = pool.apply_async(get_temperature_humidity)
 
+        et = t.time()
+        et1 = t.process_time()
+
+        #print wall and execution time
+        print("wall time: " + str(et - st))
+        print("execution time: " + str(et1 - st1))
+
+
         # wait 50 seconds
         t.sleep(50)
 
+        st = t.time()
+        st1 = t.process_time()
+        
         # make a 10 second Thread to make while loop take excactly 60 seconds
 
         delay_thread = Thread(target=thread_sleep_x_seconds, args=(10,))
         delay_thread.start()
-
+        
         temp, hum = async_result.get()
+
+        et = t.time()
+        et1 = t.process_time()
+        print("wall time: " + str(et - st))
+        print("execution time: " + str(et1 - st1))
+
+        st = t.time()
+        st1 = t.process_time()
 
         if(valid_temperature(temp) and valid_humidity(hum)):
             now = datetime.now()            
@@ -146,7 +174,16 @@ def main():
                 hühner_aktiviert = False
             
                 updateConfig()
+        et = t.time()
+        et1 = t.process_time()
+        print("wall time: " + str(et - st))
+        print("execution time: " + str(et1 - st1))
         delay_thread.join
+        et_all = t.time()
+        et_all1 = t.process_time()
+        print("wall time: " + str(et_all - st_all))
+        print("execution time: " + str(et_all1 - st_all1))
+
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
