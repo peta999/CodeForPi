@@ -88,7 +88,6 @@ def main():
 
 
         pool = ThreadPool(processes=1)
-        temp, hum = get_temperature_humidity()
         async_result = pool.apply_async(get_temperature_humidity)
 
 
