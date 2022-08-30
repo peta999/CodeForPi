@@ -88,7 +88,7 @@ def main():
         async_result = pool.apply_async(get_temperature_humidity)
 
         # wait 50 seconds
-        time.sleep(50)
+        t.sleep(50)
 
         # make a 10 second Thread to make while loop take excactly 60 seconds
 
